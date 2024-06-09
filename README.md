@@ -1,18 +1,18 @@
 # EKS-game2048
 ## Create an EKS Cluster
-Create a new EKS cluster named "game" in the "ap-south-1" region using Fargate:
+## Create a new EKS cluster named "game" in the "ap-south-1" region using Fargate:
 ```
 eksctl create cluster --name game --region ap-south-1 --fargate
 ```
 
-Update your kubeconfig to add the new context for the EKS cluster:
+## Update your kubeconfig to add the new context for the EKS cluster:
 
 ```
 aws eks update-kubeconfig --name game --region ap-south-1
 # Output: Added new context arn:aws:eks:ap-south-1:590183981315:cluster/game to /Users/path/.kube/config
 ```
 
-Create a Fargate profile for the cluster:
+## Create a Fargate profile for the cluster:
 
 ```
 eksctl create fargateprofile \
@@ -22,27 +22,27 @@ eksctl create fargateprofile \
     --namespace game-2048
 ```
 
-Deploy the Application
-Apply the Kubernetes configuration for the 2048 game:
+## Deploy the Application
+## Apply the Kubernetes configuration for the 2048 game:
 ```
 kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.5.4/docs/examples/2048/2048_full.yaml
 ```
 
-Handling AWS CLI Issues on macOS
-If you encounter the following AWS CLI error on macOS:
+## Handling AWS CLI Issues on macOS
+## If you encounter the following AWS CLI error on macOS:
 
 ```
 error: exec plugin: invalid apiVersion "client.authentication.k8s.io/v1alpha1"
 ```
 
-Or:
+## Or:
 
 ```
 Unable to connect to the server: getting credentials: decoding stdout: no kind "ExecCredential" is registered for version "client.authentication.k8s.io/v1alpha1" in scheme "pkg/client/auth/exec/exec.go:62"
 ```
-This is a known issue with the AWS CLI. To resolve it, try upgrading or downgrading the AWS CLI. If the issue persists, consider using an EC2 instance for this process.
+## This is a known issue with the AWS CLI. To resolve it, try upgrading or downgrading the AWS CLI. If the issue persists, consider using an EC2 instance for this process.
 
-To install AWS CLI v2:
+## To install AWS CLI v2:
 
 ```
 # Download AWS CLI v2
@@ -53,20 +53,20 @@ unzip awscliv2.zip
 sudo ./aws/install
 ```
 
-ssociate IAM OIDC Provider
-Associate the IAM OIDC provider with your cluster:
+## Associate IAM OIDC Provider
+## Associate the IAM OIDC provider with your cluster:
 
 ```
 eksctl utils associate-iam-oidc-provider --cluster game --approve
 ```
 
-Create IAM Policy and Service Account
-Download the IAM policy document:
+## Create IAM Policy and Service Account
+## Download the IAM policy document:
 ```
 curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.5.4/docs/install/iam_policy.json
 ```
 
-Create an IAM policy:
+## Create an IAM policy:
 
 ```
 aws iam create-policy \
@@ -74,7 +74,7 @@ aws iam create-policy \
     --policy-document file://iam_policy.json
 ```
 
-Create an IAM service account:
+## Create an IAM service account:
 
 ```
 eksctl create iamserviceaccount \
@@ -86,14 +86,14 @@ eksctl create iamserviceaccount \
   --approve
 ```
 
-Install AWS Load Balancer Controller
-Add the EKS Helm chart repository:
+## Install AWS Load Balancer Controller
+## Add the EKS Helm chart repository:
 ```
 helm repo add eks https://aws.github.io/eks-charts
 helm repo update eks
 ```
 
-Install the AWS Load Balancer Controller using Helm:
+## Install the AWS Load Balancer Controller using Helm:
 
 
 ```
@@ -105,14 +105,14 @@ helm install aws-load-balancer-controller eks/aws-load-balancer-controller -n ku
   --set vpcId=vpc-0903b6272944f1722
 ```
 
-Verify Ingress Creation
-To check if the Ingress has created a Load Balancer, run:
+## Verify Ingress Creation
+## To check if the Ingress has created a Load Balancer, run:
 
 ```
 kubectl get ingress -n game-2048
 ```
-Delete the Cluster
-To delete the cluster, use the following command:
+## Delete the Cluster
+## To delete the cluster, use the following command:
 
 ```
 eksctl delete cluster --region=ap-south-1 --name=game
